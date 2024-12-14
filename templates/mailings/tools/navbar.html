@@ -40,33 +40,33 @@
                 Попытки
             </a>
         </div>
-        </nav>
-        <div class="border-top py-2 container text-center w-100">
-            {% if user.is_authenticated %}
-            <div class="btn-group dropup">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% if user.avatar %}
-                    <img class="icon rounded-circle" src="#" width="40" height="40">
-                    {% endif %}
+    </nav>
+    <div class="border-top py-1 w-100">
+        {% if user.is_authenticated %}
+        <div class="btn-group dropup py-1 px-2 w-100" id="user-dropup">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if user.avatar %}
+                <img class="icon rounded-circle" src="{{ user.avatar | media_filter }}" width="40" height="40">
+                {% endif %}
                 {{ user.email | truncatechars:15 }}
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item text-start" href="#">Профиль</a></li>
-                    <li class="text-start">
-                        <form method="post" action="#" class="dropdown-item">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link nav-link">Выход</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-            {% else %}
-            <div class="text-center">
-                <div class="btn-group btn-group" role="group">
-                <a href="#" class="btn btn-dark" role="button">Регистрация</a>
-                <a href="#" class="btn btn-dark" role="button">Вход</a>
-            </div>
-            </div>
-            {% endif %}
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-start" href="{% url 'users:profile' user.pk %}">Профиль</a></li>
+                <li class="text-start">
+                    <form method="post" action="{% url 'users:logout' %}" class="dropdown-item">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link">Выход</button>
+                    </form>
+                </li>
+            </ul>
         </div>
+        {% else %}
+        <div class="text-center py-2 px-2">
+            <div class="btn-group btn-group" role="group">
+            <a href="{% url 'users:register' %}" class="btn btn-dark" role="button" id="btn-register">Регистрация</a>
+            <a href="{% url 'users:login' %}" class="btn btn-dark" role="button" id="btn-login">Вход</a>
+        </div>
+        </div>
+        {% endif %}
+    </div>
 </div>

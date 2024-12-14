@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'mailings',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,18 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = getenv("EMAIL_HOST")
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_PORT = getenv("EMAIL_PORT")
+EMAIL_HOST_USER = getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
+
+AUTH_USER_MODEL = "users.User"
+
+LOGIN_REDIRECT_URL = "mailings:index"
+LOGOUT_REDIRECT_URL = "mailings:index"
+LOGIN_URL = "users:login"
