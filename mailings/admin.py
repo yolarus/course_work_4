@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Message, Recipient
+from .models import Message, Recipient, Mailing
 
 
 # Register your models here.
@@ -18,3 +18,11 @@ class RecipientAdmin(admin.ModelAdmin):
     Класс для отображения модели Recipient в интерфейсе админки
     """
     list_display = ("id", "email")
+
+
+@admin.register(Mailing)
+class MailingAdmin(admin.ModelAdmin):
+    """
+    Класс для отображения модели Mailing в интерфейсе админки
+    """
+    list_display = ("id", "status")

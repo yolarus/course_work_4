@@ -2,7 +2,7 @@
 
 {% block optional_styles %}
     <style>
-        #btn-recipients {
+        #btn-mailings {
         background-color: #0d6efd;
         border-radius: 5px;
         }
@@ -18,9 +18,9 @@
     <div class="pt-5 row">
         <div class="col-2"></div>
         <div class="col-10">
-            <h1 class="text-center">Получатели</h1>
+            <h1 class="text-center">Рассылки</h1>
             <p class="text-secondary pt-2 pb-3 text-center">
-                <a href="{% url 'mailings:recipient_create' %}" class="btn btn-outline-primary">Создать нового получателя</a>
+                <a href="{% url 'mailings:mailing_create' %}" class="btn btn-outline-primary">Создать новую рассылку</a>
             </p>
         </div>
     </div>
@@ -28,15 +28,16 @@
         <div class="col-3"></div>
         <div class="col-9">
             <div class="row">
-                {% for recipient in page_obj %}
+                {% for mailing in page_obj %}
                 <div class="card col-3 ps-0 pe-0 text-center ms-4 me-5 my-3 container">
                     <div class="card-header">
-                        {{ recipient.email}}
+                        Рассылка №{{ mailing.шв}}
                     </div>
-                    <div class="card-body">
-                        <p class="pb-4">ФИО: {{ recipient.last_name }} {{ recipient.first_name }} {% if recipient.middle_name %}{{ recipient.first_name }}{% endif %}</p>
+                    <div class="card-body row">
+                        <p>Статус: {{ mailing.get_status_display }}</p>
+                        <p class="pb-4">Сообщение: <a href="{% url 'mailings:message_detail' mailing.message.pk %}" class="btn btn-sm btn-outline-primary">{{ mailing.message | truncatechars:15 }}</a></p>
                         <div class="position-absolute bottom-0 start-0 w-100 container">
-                           <a href="{% url 'mailings:recipient_detail' recipient.pk %}" class="btn btn-outline-primary w-100 my-2" role="button">Подробнее</a>
+                           <a href="{% url 'mailings:mailing_detail' mailing.pk %}" class="btn btn-outline-primary w-100 my-2" role="button">Подробнее</a>
                         </div>
                     </div>
                 </div>

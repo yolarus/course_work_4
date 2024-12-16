@@ -39,8 +39,8 @@ class Message(models.Model):
     body = models.TextField(verbose_name="Тело письма")
 
     class Meta:
-        verbose_name = "Рассылка"
-        verbose_name_plural = "Рассылки"
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
 
     def __str__(self):
         return self.subject
@@ -61,7 +61,7 @@ class Mailing(models.Model):
         verbose_name_plural = "Рассылки"
 
     def __str__(self):
-        return self.message
+        return f"Рассылка номер №{self.pk}"
 
 
 class AttemptMailing(models.Model):
@@ -78,4 +78,4 @@ class AttemptMailing(models.Model):
         verbose_name_plural = "Попытки рассылки"
 
     def __str__(self):
-        return f"{self.mailing} от {self.created_at}"
+        return f"Попытка номер №{self.pk} от {self.created_at}"

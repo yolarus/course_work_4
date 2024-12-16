@@ -63,3 +63,36 @@ class RecipientForm(ModelForm):
             "placeholder": "Комментарий",
             "rows": 5
         })
+
+
+class MailingForm(ModelForm):
+    """
+    Форма для создания и редактирования рассылки сообщений
+    """
+    class Meta:
+        model = Mailing
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        """
+        Стилизация формы при инициализации
+        """
+        super(MailingForm, self).__init__(*args, **kwargs)
+
+        self.fields["time_of_the_first_sending"].widget.attrs.update({
+            "class": "form-control",
+            "placeholder": "YYYY-MM-DD HH:MM"
+        })
+        self.fields["time_of_the_completion"].widget.attrs.update({
+            "class": "form-control",
+            "placeholder": "YYYY-MM-DD HH:MM"
+        })
+        self.fields["status"].widget.attrs.update({
+            "class": "form-select"
+        })
+        self.fields["message"].widget.attrs.update({
+            "class": "form-select"
+        })
+        self.fields["recipients"].widget.attrs.update({
+            "class": "form-select"
+        })

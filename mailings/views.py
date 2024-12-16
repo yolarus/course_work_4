@@ -3,7 +3,9 @@ from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from .models import Message, Mailing, AttemptMailing, Recipient
-from .forms import MessageForm, RecipientForm
+from .forms import MessageForm, RecipientForm, MailingForm
+
+from src.utils import get_recipients_list
 
 
 # Create your views here.
@@ -116,4 +118,66 @@ class RecipientListView(ListView):
     model = Recipient
     template_name = "mailings/recipient_list.html"
     context_object_name = "recipients"
+    paginate_by = 9
+
+
+class MailingCreateView(CreateView):
+    """
+    Представление для страницы создания рассылки сообщений
+    """
+    model = Mailing
+    form_class = MailingForm
+    template_name = "mailings/mailing_form.html"
+    success_url = reverse_lazy("mailings:mailing_list")
+
+
+class MailingUpdateView(UpdateView):
+    """
+    Представление для страницы редактирования рассылки сообщений
+    """
+    model = Mailing
+    form_class = MailingForm
+    template_name = "mailings/mailing_form.html"
+    success_url = reverse_lazy("mailings:mailing_list")
+
+    def get_success_url(self):
+        """
+        Перенаправление на страницу рассылки сообщений
+        """
+        return reverse("mailings:mailing_detail", args=[self.kwargs.get("pk")])
+
+
+class MailingDeleteView(DeleteView):
+    """
+    Представление для страницы подтверждения удаления рассылки сообщений
+    """
+    model = Mailing
+    template_name = "mailings/mailing_confirm_delete.html"
+    success_url = reverse_lazy("mailings:mailing_list")
+
+
+class MailingDetailView(DetailView):
+    """
+    Представление для страницы рассылки сообщений
+    """
+    model = Mailing
+    template_name = "mailings/mailing_detail.html"
+    context_object_name = "mailing"
+
+    def get_context_data(self, **kwargs):
+        """
+        Добавление списка получателей рассылки в контекст
+        """
+        context = super().get_context_data()
+        context["recipients"] = get_recipients_list(super().get_object())
+        return context
+
+
+class MailingListView(ListView):
+    """
+    Представление для страницы списка всех рассылок сообщений
+    """
+    model = Mailing
+    template_name = "mailings/mailing_list.html"
+    context_object_name = "mailings"
     paginate_by = 6

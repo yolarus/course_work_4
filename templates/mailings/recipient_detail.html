@@ -27,16 +27,20 @@
 
     <div class="row">
         <div class="col-3"></div>
-        <div class="card col-8 ps-0 pe-0 ms-4 me-5 my-3 container">
+        <div class="card col-8 ps-0 pe-0 ms-4 me-5 mt-3 container">
             <div class="card-header text-center">
                 Пользователь: {{ recipient.email }}
             </div>
             <div class="card-body">
-                <p>ФИО: {{ recipient.last_name }} {{ recipient.first_name }} {{ recipient.middle_name }}</p>
+                <p>ФИО: {{ recipient.last_name }} {{ recipient.first_name }} {% if recipient.middle_name %}{{ recipient.first_name }}{% endif %}</p>
+                {% if recipient.comment %}
                 <p class="preformatted-text">Комментарий:<br>{{recipient.comment}}</p>
+                {% else %}
+                <p>Комментарий отсутствует</p>
+                {% endif %}
                 <div class="container text-center">
                         <div class="btn-group w-50">
-                            <a href="{% url 'mailings:recipient_list' %}" class="btn btn-outline-primary my-2" role="button">Назад</a>
+                            <a href="{% url 'mailings:recipient_list' %}" class="btn btn-outline-primary my-2" role="button">К списку</a>
                             <a href="{% url 'mailings:recipient_update' recipient.pk %}" class="btn btn-outline-secondary my-2" role="button">Редактировать</a>
                             <a href="{% url 'mailings:recipient_delete' recipient.pk %}" class="btn btn-outline-danger my-2" role="button">Удалить</a>
                         </div>

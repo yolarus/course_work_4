@@ -18,4 +18,10 @@ urlpatterns = [
     path("recipients/create/", views.RecipientCreateView.as_view(), name="recipient_create"),
     path("recipients/update/<int:pk>", views.RecipientUpdateView.as_view(), name="recipient_update"),
     path("recipients/delete/<int:pk>", views.RecipientDeleteView.as_view(), name="recipient_delete"),
+
+    path("mailings/", views.MailingListView.as_view(), name="mailing_list"),
+    path("mailings/detail/<int:pk>", views.MailingDetailView.as_view(), name="mailing_detail"),
+    path("mailings/create/", views.MailingCreateView.as_view(), name="mailing_create"),
+    path("mailings/update/<int:pk>", views.MailingUpdateView.as_view(), name="mailing_update"),
+    path("mailings/delete/<int:pk>", views.MailingDeleteView.as_view(), name="mailing_delete"),
 ]

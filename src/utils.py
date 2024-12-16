@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 
+from mailings.models import Mailing, Recipient
+
 
 def check_photo(photo):
     """
@@ -14,3 +16,16 @@ def check_photo(photo):
         return photo
     else:
         return False
+
+
+def get_recipients_list(mailing: Mailing | None = None):
+    """
+    Получение списка получателей указанной рассылки
+    :param mailing: Рассылка сообщений Mailing
+    :return: Список получателей рассылки Recipient
+    """
+    if mailing:
+        recipients = mailing.recipients
+    else:
+        recipients = Recipient.objects.all()
+    return recipients.order_by("last_name")
