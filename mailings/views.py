@@ -1,11 +1,13 @@
 from django.urls import reverse_lazy, reverse
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+
+from django.shortcuts import redirect
 
 from .models import Message, Mailing, AttemptMailing, Recipient
 from .forms import MessageForm, RecipientForm, MailingForm
 
-from src.utils import get_recipients_list
+from src.utils import get_recipients_list, send_mailing
 
 
 # Create your views here.
@@ -181,3 +183,15 @@ class MailingListView(ListView):
     template_name = "mailings/mailing_list.html"
     context_object_name = "mailings"
     paginate_by = 6
+
+
+class MailingSendView(View):
+    """
+    Представление для отправки рассылки сообщений через интерфейс приложения
+    """
+    def get(self, request, pk):
+        """
+        Отправка рассылки через интерфейс приложения
+        """
+        send_mailing(pk)
+        return redirect(reverse("mailings:index"))

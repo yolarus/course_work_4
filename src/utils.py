@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 
-from mailings.models import Mailing, Recipient
+from mailings.models import Mailing, Recipient, AttemptMailing
 
 
 def check_photo(photo):
@@ -29,3 +31,28 @@ def get_recipients_list(mailing: Mailing | None = None):
     else:
         recipients = Recipient.objects.all()
     return recipients.order_by("last_name")
+
+
+def send_mailing(mailing_pk: int) -> str:
+    """
+    Отправка рассылки по ключу
+    :param mailing_pk: Primary key модели Mailing
+    :return: Ответ почтового сервера
+    """
+    mailing = get_object_or_404(Mailing, pk=mailing_pk)
+    attempt = AttemptMailing.objects.create(mailing=mailing)
+    try:
+        send_mail(subject=mailing.message.subject,
+                  message=mailing.message.body,
+                  from_email=None,
+                  recipient_list=[recipient.email for recipient in get_recipients_list(mailing)])
+        mailing.status = "started"
+        attempt.status = "successful"
+        attempt.mail_server_response = "Рассылка успешно отправлена"
+    except Exception as e:
+        mailing.status = "created"
+        attempt.status = "unsuccessful"
+        attempt.mail_server_response = e.args[1]
+    mailing.save()
+    attempt.save()
+    return attempt.mail_server_response

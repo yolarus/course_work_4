@@ -42,6 +42,7 @@
                 <div class="container text-center">
                         <div class="btn-group w-50">
                             <a href="{% url 'mailings:mailing_list' %}" class="btn btn-outline-primary my-2" role="button">К списку</a>
+                            <a href="{% url 'mailings:mailing_send' mailing.pk %}" class="btn btn-outline-success my-2" role="button">Отправить</a>
                             <a href="{% url 'mailings:mailing_update' mailing.pk %}" class="btn btn-outline-secondary my-2" role="button">Редактировать</a>
                             <a href="{% url 'mailings:mailing_delete' mailing.pk %}" class="btn btn-outline-danger my-2" role="button">Удалить</a>
                         </div>
