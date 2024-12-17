@@ -18,7 +18,11 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('time_of_the_first_sending', models.DateTimeField(verbose_name='Дата и время первой отправки')),
                 ('time_of_the_completion', models.DateTimeField(verbose_name='Дата и время окончания отправки')),
-                ('status', models.CharField(choices=[('completed', 'Завершена'), ('created', 'Создана'), ('started', 'Запущена')], max_length=25, verbose_name='Статус')),
+                ('status', models.CharField(choices=[('completed', 'Завершена'),
+                                                     ('created', 'Создана'),
+                                                     ('started', 'Запущена')],
+                                            max_length=25,
+                                            verbose_name='Статус')),
             ],
             options={
                 'verbose_name': 'Рассылка',
@@ -57,9 +61,15 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания')),
-                ('status', models.CharField(choices=[('successful', 'Успешно'), ('unsuccessful', 'Неуспешно')], max_length=15, verbose_name='Статус')),
+                ('status', models.CharField(choices=[('successful', 'Успешно'),
+                                                     ('unsuccessful', 'Неуспешно')],
+                                            max_length=15,
+                                            verbose_name='Статус')),
                 ('mail_server_response', models.TextField(verbose_name='Ответ почтового сервера')),
-                ('mailing', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attempts', to='mailings.mailing', verbose_name='Рассылка')),
+                ('mailing', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                              related_name='attempts',
+                                              to='mailings.mailing',
+                                              verbose_name='Рассылка')),
             ],
             options={
                 'verbose_name': 'Попытка рассылки',
@@ -69,7 +79,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mailing',
             name='message',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='mailings', to='mailings.message', verbose_name='Сообщение'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT,
+                                    related_name='mailings',
+                                    to='mailings.message',
+                                    verbose_name='Сообщение'),
         ),
         migrations.AddField(
             model_name='mailing',

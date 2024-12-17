@@ -32,7 +32,7 @@
                 Пользователь: {{ recipient.email }}
             </div>
             <div class="card-body">
-                <p>ФИО: {{ recipient.last_name }} {{ recipient.first_name }} {% if recipient.middle_name %}{{ recipient.first_name }}{% endif %}</p>
+                <p>ФИО: {{ recipient }}</p>
                 {% if recipient.comment %}
                 <p class="preformatted-text">Комментарий:<br>{{recipient.comment}}</p>
                 {% else %}

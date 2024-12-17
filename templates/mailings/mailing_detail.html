@@ -36,7 +36,7 @@
                 <p>
                     Получатели:
                     {% for recipient in recipients %}
-                    <a href="{% url 'mailings:recipient_detail' recipient.pk %}" class="btn btn-sm btn-outline-primary">{{ recipient.last_name }} {{ recipient.first_name }} {% if recipient.middle_name %}{{ recipient.first_name }}{% endif %}</a>
+                    <a href="{% url 'mailings:recipient_detail' recipient.pk %}" class="btn btn-sm btn-outline-primary">{{ recipient }}</a>
                     {% endfor %}
                 </p>
                 <div class="container text-center">

@@ -33,9 +33,9 @@
                     <div class="card-header">
                         {{ recipient.email}}
                     </div>
-                    <div class="card-body">
-                        <p class="pb-4">ФИО: {{ recipient.last_name }} {{ recipient.first_name }} {% if recipient.middle_name %}{{ recipient.first_name }}{% endif %}</p>
-                        <div class="position-absolute bottom-0 start-0 w-100 container">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <p class="py-0 my-0">ФИО: {{ recipient }}</p>
+                        <div class="w-100 container">
                            <a href="{% url 'mailings:recipient_detail' recipient.pk %}" class="btn btn-outline-primary w-100 my-2" role="button">Подробнее</a>
                         </div>
                     </div>

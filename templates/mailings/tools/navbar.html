@@ -1,6 +1,6 @@
 {% load my_tags %}
 <!-- Меню страницы -->
-<div class="position-fixed col-2 vh-100 container overflow-hidden bg-dark text-white" data-bs-theme="dark" id="navbar">
+<div class="position-fixed col-2 vh-100 container overflow-hidden bg-dark text-white d-flex flex-column justify-content-between" data-bs-theme="dark">
     <nav class="navbar-expand-lg w-100">
         <div class="border-bottom py-3">
              <div class="btn-group">
@@ -35,7 +35,7 @@
             </a>
         </div>
         <div class="mt-2 py-2" id="btn-attempts">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'mailings:attempt_mailing_list' %}">
                 <img class="icon" src="/static/navbar/send.svg" width="30" height="24">
                 Попытки
             </a>

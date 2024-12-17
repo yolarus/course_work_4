@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from .models import Message, Mailing, AttemptMailing, Recipient
+from .models import Mailing, Message, Recipient
 
 
 class MessageForm(ModelForm):

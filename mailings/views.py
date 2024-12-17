@@ -1,18 +1,22 @@
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from django.shortcuts import redirect
+from src.utils import get_recipients_list, get_statistic_to_index, send_mailing
 
-from .models import Message, Mailing, AttemptMailing, Recipient
-from .forms import MessageForm, RecipientForm, MailingForm
-
-from src.utils import get_recipients_list, send_mailing
+from .forms import MailingForm, MessageForm, RecipientForm
+from .models import AttemptMailing, Mailing, Message, Recipient
 
 
 # Create your views here.
 class IndexView(TemplateView):
     template_name = "mailings/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_statistic_to_index())
+        return context
 
 
 class MessageCreateView(CreateView):
@@ -66,7 +70,11 @@ class MessageListView(ListView):
     model = Message
     template_name = "mailings/message_list.html"
     context_object_name = "messages"
-    paginate_by = 6
+    paginate_by = 3
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.order_by("id")
 
 
 class RecipientCreateView(CreateView):
@@ -121,6 +129,10 @@ class RecipientListView(ListView):
     template_name = "mailings/recipient_list.html"
     context_object_name = "recipients"
     paginate_by = 9
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.order_by("last_name")
 
 
 class MailingCreateView(CreateView):
@@ -184,6 +196,10 @@ class MailingListView(ListView):
     context_object_name = "mailings"
     paginate_by = 6
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.order_by("id")
+
 
 class MailingSendView(View):
     """
@@ -195,3 +211,17 @@ class MailingSendView(View):
         """
         send_mailing(pk)
         return redirect(reverse("mailings:index"))
+
+
+class AttemptMailingListView(ListView):
+    """
+    Представление для страницы списка всех попыток рассылок сообщений
+    """
+    model = AttemptMailing
+    template_name = "mailings/attempt_mailing_list.html"
+    context_object_name = "attempts"
+    paginate_by = 6
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.order_by("id")

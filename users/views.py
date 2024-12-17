@@ -1,6 +1,5 @@
 import secrets
 
-from django.core.exceptions import ValidationError
 from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect

@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 
-from mailings.models import Mailing, Recipient, AttemptMailing
+from mailings.models import AttemptMailing, Mailing, Recipient
 
 
 def check_photo(photo):
@@ -56,3 +56,20 @@ def send_mailing(mailing_pk: int) -> str:
     mailing.save()
     attempt.save()
     return attempt.mail_server_response
+
+
+def get_statistic_to_index():
+    """
+    Сбор статистики для отображения на главной странице
+    """
+    mailings = Mailing.objects.all()
+    mailings_count = mailings.count()
+    started_mailings_count = mailings.filter(status="started").count()
+    recipients = Recipient.objects.all()
+    recipients_count = recipients.count()
+    result = {
+        "mailings_count": mailings_count,
+        "started_mailings_count": started_mailings_count,
+        "recipients_count": recipients_count
+    }
+    return result

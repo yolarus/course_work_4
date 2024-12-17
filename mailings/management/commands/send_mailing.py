@@ -1,5 +1,6 @@
-from src.utils import send_mailing
 from django.core.management import BaseCommand
+
+from src.utils import send_mailing
 
 
 class Command(BaseCommand):
@@ -15,5 +16,3 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("mailing_id", type=int, action="store", help="id рассылки сообщений Mailing")
-
-
