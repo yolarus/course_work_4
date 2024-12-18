@@ -96,3 +96,22 @@ class MailingForm(ModelForm):
         self.fields["recipients"].widget.attrs.update({
             "class": "form-select"
         })
+
+
+class MailingManagerForm(ModelForm):
+    """
+    Форма для отключения рассылок - для менеджеров
+    """
+    class Meta:
+        model = Mailing
+        fields = ["status"]
+
+    def __init__(self, *args, **kwargs):
+        """
+        Стилизация формы при инициализации
+        """
+        super(MailingManagerForm, self).__init__(*args, **kwargs)
+
+        self.fields["status"].widget.attrs.update({
+            "class": "form-select"
+        })

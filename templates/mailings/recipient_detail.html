@@ -41,8 +41,10 @@
                 <div class="container text-center">
                         <div class="btn-group w-50">
                             <a href="{% url 'mailings:recipient_list' %}" class="btn btn-outline-primary my-2" role="button">К списку</a>
+                            {% if user == recipient.owner or user.is_superuser %}
                             <a href="{% url 'mailings:recipient_update' recipient.pk %}" class="btn btn-outline-secondary my-2" role="button">Редактировать</a>
                             <a href="{% url 'mailings:recipient_delete' recipient.pk %}" class="btn btn-outline-danger my-2" role="button">Удалить</a>
+                            {% endif %}
                         </div>
                     </div>
             </div>

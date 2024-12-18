@@ -1,14 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.core.exceptions import PermissionDenied
 
-from src.utils import (get_recipients_list, get_statistic_to_index, check_object_for_owner,
-                       send_mailing, add_owner_to_instance, get_queryset_for_owner, get_personal_statistic)
+from src.utils import (add_owner_to_instance, check_access_to_delete, check_access_to_view, get_personal_statistic,
+                       get_queryset_for_owner, get_recipients_list, get_statistic_to_index, send_mailing)
 
-from .forms import MailingForm, MessageForm, RecipientForm
+from .forms import MailingForm, MailingManagerForm, MessageForm, RecipientForm
 from .models import AttemptMailing, Mailing, Message, Recipient
 
 
@@ -85,7 +86,7 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
         """
         Проверка возможности пользователя удалять сообщения рассылки
         """
-        return check_object_for_owner(super().get_object(queryset), self.request.user)
+        return check_access_to_delete(super().get_object(queryset), self.request.user)
 
 
 class MessageDetailView(LoginRequiredMixin, DetailView):
@@ -100,7 +101,7 @@ class MessageDetailView(LoginRequiredMixin, DetailView):
         """
         Проверка возможности пользователя просматривать страницу сообщения рассылки
         """
-        return check_object_for_owner(super().get_object(queryset), self.request.user)
+        return check_access_to_view(super().get_object(queryset), self.request.user)
 
 
 class MessageListView(LoginRequiredMixin, ListView):
@@ -171,7 +172,7 @@ class RecipientDeleteView(LoginRequiredMixin, DeleteView):
         """
         Проверка возможности пользователя удалять получателей рассылки
         """
-        return check_object_for_owner(super().get_object(queryset), self.request.user)
+        return check_access_to_delete(super().get_object(queryset), self.request.user)
 
 
 class RecipientDetailView(LoginRequiredMixin, DetailView):
@@ -186,7 +187,7 @@ class RecipientDetailView(LoginRequiredMixin, DetailView):
         """
         Проверка возможности пользователя просматривать страницу получателя рассылки
         """
-        return check_object_for_owner(super().get_object(queryset), self.request.user)
+        return check_access_to_view(super().get_object(queryset), self.request.user)
 
 
 class RecipientListView(LoginRequiredMixin, ListView):
@@ -236,6 +237,8 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
         user = self.request.user
         if user == self.object.owner or user.is_superuser:
             return MailingForm
+        elif user.has_perm("mailings.can_disable_mailing"):
+            return MailingManagerForm
         raise PermissionDenied
 
     def get_success_url(self):
@@ -257,7 +260,7 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
         """
         Проверка возможности пользователя удалять рассылки сообщений
         """
-        return check_object_for_owner(super().get_object(queryset), self.request.user)
+        return check_access_to_delete(super().get_object(queryset), self.request.user)
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -272,7 +275,7 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
         """
         Проверка возможности пользователя просматривать страницу рассылки сообщений
         """
-        return check_object_for_owner(super().get_object(queryset), self.request.user)
+        return check_access_to_view(super().get_object(queryset), self.request.user)
 
     def get_context_data(self, **kwargs):
         """

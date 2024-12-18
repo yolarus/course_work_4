@@ -51,7 +51,7 @@
                 {{ user.email | truncatechars:15 }}
             </a>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item text-start" href="{% url 'users:profile' user.pk %}">Профиль</a></li>
+                <li><a class="dropdown-item text-start" href="{% url 'users:user_detail' user.pk %}">Профиль</a></li>
                 <li class="text-start">
                     <form method="post" action="{% url 'users:logout' %}" class="dropdown-item">
                     {% csrf_token %}

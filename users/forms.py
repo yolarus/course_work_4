@@ -38,7 +38,7 @@ class UserRegisterForm(UserCreationForm):
 
 class LoginUserForm(AuthenticationForm):
     """
-    Форма для входа пользователя в сервисе рассылок сообщений
+    Форма для входа пользователя в сервис рассылок сообщений
     """
     def __init__(self, *args, **kwargs):
         """
@@ -58,7 +58,7 @@ class LoginUserForm(AuthenticationForm):
 
 class UserProfileForm(ModelForm):
     """
-    Форма для страницы информации о пользователе интернет-магазина
+    Форма для страницы информации о пользователе сервиса рассылок
     """
     class Meta:
         model = User
@@ -109,3 +109,22 @@ class UserProfileForm(ModelForm):
         """
         avatar = self.files.get("avatar")
         check_photo(avatar)
+
+
+class UserBlockForm(ModelForm):
+    """
+    Форма для страницы блокировки пользователя сервиса рассылок
+    """
+    class Meta:
+        model = User
+        fields = ["is_active"]
+
+    def __init__(self, *args, **kwargs):
+        """
+        Стилизация формы при инициализации
+        """
+        super(UserBlockForm, self).__init__(*args, **kwargs)
+
+        self.fields["is_active"].widget.attrs.update({
+            "class": "form-check-input",
+        })

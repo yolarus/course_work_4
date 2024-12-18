@@ -1,14 +1,17 @@
 import secrets
 
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 
 from config.settings import EMAIL_HOST_USER
 
-from .forms import LoginUserForm, UserProfileForm, UserRegisterForm
+from .forms import LoginUserForm, UserBlockForm, UserProfileForm, UserRegisterForm
 from .models import User
 
 
@@ -56,7 +59,7 @@ class LoginUserView(LoginView):
     form_class = LoginUserForm
 
 
-class UserProfileView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     """
     Класс-представление для обновления информации о пользователе
     """
@@ -64,3 +67,48 @@ class UserProfileView(UpdateView):
     template_name = "users/user_form.html"
     form_class = UserProfileForm
     success_url = reverse_lazy("mailings:index")
+
+    def get_form_class(self):
+        """
+        Подбор соответствующей формы для редактирования пользователя
+        """
+        user = self.get_object()
+        current_user = self.request.user
+        if current_user == user or current_user.is_superuser:
+            return UserProfileForm
+        elif current_user.has_perm("users.can_block_user") and not user.is_superuser:
+            return UserBlockForm
+        raise PermissionDenied
+
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    """
+    Класс-представление для страницы информации о пользователе
+    """
+    model = User
+    template_name = "users/user_detail.html"
+    context_object_name = "user"
+
+    def get_object(self, queryset=None):
+        """
+        Проверка прав пользователя на просмотр страницы
+        """
+        user = super().get_object()
+        current_user = self.request.user
+        if current_user == user or current_user.has_perm("users.can_block_user"):
+            return user
+        raise PermissionDenied
+
+
+class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    """
+    Класс-представление для страницы информации о всех пользователях
+    """
+    model = User
+    template_name = "users/user_list.html"
+    context_object_name = "users"
+    paginate_by = 6
+    permission_required = "users.can_block_user"
+
+    def get_queryset(self):
+        return super().get_queryset().order_by("id")

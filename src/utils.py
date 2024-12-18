@@ -1,7 +1,7 @@
-from django.core.exceptions import ValidationError
+from django.contrib.auth.models import Group
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
 
 from mailings.models import AttemptMailing, Mailing, Recipient
 
@@ -78,6 +78,9 @@ def get_statistic_to_index():
 
 
 def get_personal_statistic(user):
+    """
+    Сбор статистики для отображения на странице статистики пользователя
+    """
     mailings = Mailing.objects.filter(owner=user)
     result = {"mailings": []}
     for mailing in mailings:
@@ -107,15 +110,27 @@ def get_queryset_for_owner(user, queryset):
     """
     Выборка списка объектов только для их владельцев
     """
-    if user.is_superuser:
-        return queryset.order_by("id")
-    else:
+    try:
+        if user.is_superuser or user.groups.get(name="Managers"):
+            return queryset.order_by("id")
+    except Group.DoesNotExist:
         return queryset.filter(owner=user).order_by("id")
 
 
-def check_object_for_owner(instance, user):
+def check_access_to_view(instance, user):
     """
-    Проверка статуса владельца для просмотра, редактирования и удаления объекта
+    Проверка статуса владельца для просмотра объекта
+    """
+    try:
+        if user == instance.owner or user.is_superuser or user.groups.get(name="Managers"):
+            return instance
+    except Group.DoesNotExist:
+        raise PermissionDenied
+
+
+def check_access_to_delete(instance, user):
+    """
+    Проверка статуса владельца для удаления объекта
     """
     if user == instance.owner or user.is_superuser:
         return instance
