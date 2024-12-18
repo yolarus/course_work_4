@@ -1,9 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.core.exceptions import PermissionDenied
 
-from src.utils import get_recipients_list, get_statistic_to_index, send_mailing
+from src.utils import (get_recipients_list, get_statistic_to_index, check_object_for_owner,
+                       send_mailing, add_owner_to_instance, get_queryset_for_owner, get_personal_statistic)
 
 from .forms import MailingForm, MessageForm, RecipientForm
 from .models import AttemptMailing, Mailing, Message, Recipient
@@ -19,7 +22,16 @@ class IndexView(TemplateView):
         return context
 
 
-class MessageCreateView(CreateView):
+class PersonalStatisticView(LoginRequiredMixin, TemplateView):
+    template_name = "mailings/personal_statistic.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_personal_statistic(self.request.user))
+        return context
+
+
+class MessageCreateView(LoginRequiredMixin,CreateView):
     """
     Представление для страницы создания сообщения рассылки
     """
@@ -28,8 +40,15 @@ class MessageCreateView(CreateView):
     template_name = "mailings/message_form.html"
     success_url = reverse_lazy("mailings:message_list")
 
+    def form_valid(self, form):
+        """
+        Сохранение владельца сообщения для рассылки
+        """
+        add_owner_to_instance(self.request, form)
+        return super().form_valid(form)
 
-class MessageUpdateView(UpdateView):
+
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     """
     Представление для страницы редактирования сообщения рассылки
     """
@@ -38,6 +57,15 @@ class MessageUpdateView(UpdateView):
     template_name = "mailings/message_form.html"
     success_url = reverse_lazy("mailings:message_list")
 
+    def get_form_class(self):
+        """
+        Подбор соответствующей формы для редактирования сообщения рассылки
+        """
+        user = self.request.user
+        if user == self.object.owner or user.is_superuser:
+            return MessageForm
+        raise PermissionDenied
+
     def get_success_url(self):
         """
         Перенаправление на страницу сообщения рассылки
@@ -45,7 +73,7 @@ class MessageUpdateView(UpdateView):
         return reverse("mailings:message_detail", args=[self.kwargs.get("pk")])
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     """
     Представление для страницы подтверждения удаления сообщения рассылки
     """
@@ -53,8 +81,14 @@ class MessageDeleteView(DeleteView):
     template_name = "mailings/message_confirm_delete.html"
     success_url = reverse_lazy("mailings:message_list")
 
+    def get_object(self, queryset=None):
+        """
+        Проверка возможности пользователя удалять сообщения рассылки
+        """
+        return check_object_for_owner(super().get_object(queryset), self.request.user)
 
-class MessageDetailView(DetailView):
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
     """
     Представление для страницы сообщения рассылки
     """
@@ -62,8 +96,14 @@ class MessageDetailView(DetailView):
     template_name = "mailings/message_detail.html"
     context_object_name = "message"
 
+    def get_object(self, queryset=None):
+        """
+        Проверка возможности пользователя просматривать страницу сообщения рассылки
+        """
+        return check_object_for_owner(super().get_object(queryset), self.request.user)
 
-class MessageListView(ListView):
+
+class MessageListView(LoginRequiredMixin, ListView):
     """
     Представление для страницы списка всех сообщений рассылки
     """
@@ -73,11 +113,11 @@ class MessageListView(ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.order_by("id")
+        queryset = get_queryset_for_owner(self.request.user, super().get_queryset())
+        return queryset
 
 
-class RecipientCreateView(CreateView):
+class RecipientCreateView(LoginRequiredMixin, CreateView):
     """
     Представление для страницы создания получателя рассылки
     """
@@ -86,8 +126,15 @@ class RecipientCreateView(CreateView):
     template_name = "mailings/recipient_form.html"
     success_url = reverse_lazy("mailings:recipient_list")
 
+    def form_valid(self, form):
+        """
+        Сохранение владельца получателя рассылки
+        """
+        add_owner_to_instance(self.request, form)
+        return super().form_valid(form)
 
-class RecipientUpdateView(UpdateView):
+
+class RecipientUpdateView(LoginRequiredMixin, UpdateView):
     """
     Представление для страницы редактирования получателя рассылки
     """
@@ -96,6 +143,15 @@ class RecipientUpdateView(UpdateView):
     template_name = "mailings/recipient_form.html"
     success_url = reverse_lazy("mailings:recipient_list")
 
+    def get_form_class(self):
+        """
+        Подбор соответствующей формы для редактирования получателя рассылки
+        """
+        user = self.request.user
+        if user == self.object.owner or user.is_superuser:
+            return RecipientForm
+        raise PermissionDenied
+
     def get_success_url(self):
         """
         Перенаправление на страницу получателя рассылки
@@ -103,7 +159,7 @@ class RecipientUpdateView(UpdateView):
         return reverse("mailings:recipient_detail", args=[self.kwargs.get("pk")])
 
 
-class RecipientDeleteView(DeleteView):
+class RecipientDeleteView(LoginRequiredMixin, DeleteView):
     """
     Представление для страницы подтверждения удаления получателя рассылки
     """
@@ -111,8 +167,14 @@ class RecipientDeleteView(DeleteView):
     template_name = "mailings/recipient_confirm_delete.html"
     success_url = reverse_lazy("mailings:recipient_list")
 
+    def get_object(self, queryset=None):
+        """
+        Проверка возможности пользователя удалять получателей рассылки
+        """
+        return check_object_for_owner(super().get_object(queryset), self.request.user)
 
-class RecipientDetailView(DetailView):
+
+class RecipientDetailView(LoginRequiredMixin, DetailView):
     """
     Представление для страницы получателя рассылки
     """
@@ -120,8 +182,14 @@ class RecipientDetailView(DetailView):
     template_name = "mailings/recipient_detail.html"
     context_object_name = "recipient"
 
+    def get_object(self, queryset=None):
+        """
+        Проверка возможности пользователя просматривать страницу получателя рассылки
+        """
+        return check_object_for_owner(super().get_object(queryset), self.request.user)
 
-class RecipientListView(ListView):
+
+class RecipientListView(LoginRequiredMixin, ListView):
     """
     Представление для страницы списка всех получателей рассылки
     """
@@ -131,11 +199,11 @@ class RecipientListView(ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = get_queryset_for_owner(self.request.user, super().get_queryset())
         return queryset.order_by("last_name")
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(LoginRequiredMixin, CreateView):
     """
     Представление для страницы создания рассылки сообщений
     """
@@ -144,8 +212,15 @@ class MailingCreateView(CreateView):
     template_name = "mailings/mailing_form.html"
     success_url = reverse_lazy("mailings:mailing_list")
 
+    def form_valid(self, form):
+        """
+        Сохранение владельца рассылки
+        """
+        add_owner_to_instance(self.request, form)
+        return super().form_valid(form)
 
-class MailingUpdateView(UpdateView):
+
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """
     Представление для страницы редактирования рассылки сообщений
     """
@@ -154,6 +229,15 @@ class MailingUpdateView(UpdateView):
     template_name = "mailings/mailing_form.html"
     success_url = reverse_lazy("mailings:mailing_list")
 
+    def get_form_class(self):
+        """
+        Подбор соответствующей формы для редактирования рассылки сообщений
+        """
+        user = self.request.user
+        if user == self.object.owner or user.is_superuser:
+            return MailingForm
+        raise PermissionDenied
+
     def get_success_url(self):
         """
         Перенаправление на страницу рассылки сообщений
@@ -161,7 +245,7 @@ class MailingUpdateView(UpdateView):
         return reverse("mailings:mailing_detail", args=[self.kwargs.get("pk")])
 
 
-class MailingDeleteView(DeleteView):
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
     """
     Представление для страницы подтверждения удаления рассылки сообщений
     """
@@ -169,14 +253,26 @@ class MailingDeleteView(DeleteView):
     template_name = "mailings/mailing_confirm_delete.html"
     success_url = reverse_lazy("mailings:mailing_list")
 
+    def get_object(self, queryset=None):
+        """
+        Проверка возможности пользователя удалять рассылки сообщений
+        """
+        return check_object_for_owner(super().get_object(queryset), self.request.user)
 
-class MailingDetailView(DetailView):
+
+class MailingDetailView(LoginRequiredMixin, DetailView):
     """
     Представление для страницы рассылки сообщений
     """
     model = Mailing
     template_name = "mailings/mailing_detail.html"
     context_object_name = "mailing"
+
+    def get_object(self, queryset=None):
+        """
+        Проверка возможности пользователя просматривать страницу рассылки сообщений
+        """
+        return check_object_for_owner(super().get_object(queryset), self.request.user)
 
     def get_context_data(self, **kwargs):
         """
@@ -187,7 +283,7 @@ class MailingDetailView(DetailView):
         return context
 
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, ListView):
     """
     Представление для страницы списка всех рассылок сообщений
     """
@@ -197,11 +293,11 @@ class MailingListView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.order_by("id")
+        queryset = get_queryset_for_owner(self.request.user, super().get_queryset())
+        return queryset
 
 
-class MailingSendView(View):
+class MailingSendView(LoginRequiredMixin, View):
     """
     Представление для отправки рассылки сообщений через интерфейс приложения
     """
@@ -209,11 +305,11 @@ class MailingSendView(View):
         """
         Отправка рассылки через интерфейс приложения
         """
-        send_mailing(pk)
+        send_mailing(pk, request.user)
         return redirect(reverse("mailings:index"))
 
 
-class AttemptMailingListView(ListView):
+class AttemptMailingListView(LoginRequiredMixin, ListView):
     """
     Представление для страницы списка всех попыток рассылок сообщений
     """
@@ -223,5 +319,5 @@ class AttemptMailingListView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.order_by("id")
+        queryset = get_queryset_for_owner(self.request.user, super().get_queryset())
+        return queryset

@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 MAILING_STATUS = [
     ("completed", "Завершена"),
     ("created", "Создана"),
@@ -22,13 +24,17 @@ class Recipient(models.Model):
     last_name = models.CharField(max_length=50, verbose_name="Фамилия")
     middle_name = models.CharField(max_length=50, verbose_name="Отчество", null=True, blank=True)
     comment = models.TextField(verbose_name="Комментарий", null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Владелец", null=True, blank=True)
 
     class Meta:
         verbose_name = "Получатель"
         verbose_name_plural = "Получатели"
 
     def __str__(self):
-        return f" {self.last_name} {self.first_name} {self.middle_name if self.middle_name else ''}"
+        if self.middle_name:
+            return f"{self.last_name} {self.first_name} {self.middle_name}"
+        else:
+            return f"{self.last_name} {self.first_name}"
 
 
 class Message(models.Model):
@@ -37,6 +43,7 @@ class Message(models.Model):
     """
     subject = models.CharField(max_length=150, verbose_name="Тема письма")
     body = models.TextField(verbose_name="Тело письма")
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Владелец", null=True, blank=True)
 
     class Meta:
         verbose_name = "Сообщение"
@@ -55,13 +62,14 @@ class Mailing(models.Model):
     status = models.CharField(max_length=25, choices=MAILING_STATUS, verbose_name="Статус")
     message = models.ForeignKey(Message, on_delete=models.PROTECT, verbose_name="Сообщение", related_name="mailings")
     recipients = models.ManyToManyField(Recipient, verbose_name="Получатели", related_name="mailings")
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Владелец", null=True, blank=True)
 
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
 
     def __str__(self):
-        return f"Рассылка номер №{self.pk}"
+        return f"Рассылка №{self.pk}"
 
 
 class AttemptMailing(models.Model):
@@ -72,10 +80,11 @@ class AttemptMailing(models.Model):
     status = models.CharField(max_length=15, choices=ATTEMPT_STATUS, verbose_name="Статус")
     mail_server_response = models.TextField(verbose_name="Ответ почтового сервера")
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка", related_name="attempts")
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Владелец", null=True, blank=True)
 
     class Meta:
         verbose_name = "Попытка рассылки"
         verbose_name_plural = "Попытки рассылки"
 
     def __str__(self):
-        return f"Попытка номер №{self.pk} от {self.created_at}"
+        return f"Попытка №{self.pk} от {self.created_at}"

@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
 
 from mailings.models import AttemptMailing, Mailing, Recipient
 
@@ -33,7 +34,7 @@ def get_recipients_list(mailing: Mailing | None = None):
     return recipients.order_by("last_name")
 
 
-def send_mailing(mailing_pk: int) -> str:
+def send_mailing(mailing_pk: int, user) -> str:
     """
     Отправка рассылки по ключу
     :param mailing_pk: Primary key модели Mailing
@@ -54,6 +55,7 @@ def send_mailing(mailing_pk: int) -> str:
         attempt.status = "unsuccessful"
         attempt.mail_server_response = e.args[1]
     mailing.save()
+    attempt.owner = user
     attempt.save()
     return attempt.mail_server_response
 
@@ -73,3 +75,48 @@ def get_statistic_to_index():
         "recipients_count": recipients_count
     }
     return result
+
+
+def get_personal_statistic(user):
+    mailings = Mailing.objects.filter(owner=user)
+    result = {"mailings": []}
+    for mailing in mailings:
+        attempts = AttemptMailing.objects.filter(mailing=mailing)
+        attempts_count = attempts.count()
+        successful_attempts_count = attempts.filter(status="successful").count()
+        recipients = get_recipients_list(mailing)
+        result["mailings"].append((mailing, (f"было произведено {attempts_count} попыток отправки, "
+                                             f"{successful_attempts_count} из них успешны. "
+                                             f"В рассылке состояло {len(recipients)} получателей. "
+                                             f"Каждый из получателей на данных момент получил "
+                                             f"{successful_attempts_count} сообщений.")))
+    return result
+
+
+def add_owner_to_instance(request, form):
+    """
+    Добавляет в поле owner модели текущего пользователя
+    """
+    instance = form.save()
+    user = request.user
+    instance.owner = user
+    instance.save()
+
+
+def get_queryset_for_owner(user, queryset):
+    """
+    Выборка списка объектов только для их владельцев
+    """
+    if user.is_superuser:
+        return queryset.order_by("id")
+    else:
+        return queryset.filter(owner=user).order_by("id")
+
+
+def check_object_for_owner(instance, user):
+    """
+    Проверка статуса владельца для просмотра, редактирования и удаления объекта
+    """
+    if user == instance.owner or user.is_superuser:
+        return instance
+    raise PermissionDenied

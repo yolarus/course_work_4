@@ -7,6 +7,8 @@ app_name = MailingsConfig.name
 
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
+    path("personal_statistic/", views.PersonalStatisticView.as_view(), name="personal_statistic"),
+
     path("messages/", views.MessageListView.as_view(), name="message_list"),
     path("messages/detail/<int:pk>/", views.MessageDetailView.as_view(), name="message_detail"),
     path("messages/create/", views.MessageCreateView.as_view(), name="message_create"),

@@ -1,0 +1,44 @@
+{% extends 'mailings/base.html' %}
+
+{% block optional_styles %}
+    <style>
+        #btn-index {
+        background-color: #0d6efd;
+        border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<aside>
+    {% include "mailings/tools/navbar.html" %}
+</aside>
+
+<main>
+    <div class="pt-5 row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <h1 class="text-center">Личная статистика</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-8">
+            <div class="card ps-0 pe-0 ms-4 me-5 my-3 container">
+                <div class="card-header text-center ">
+                    Статистика пользователя {{ user }}
+                </div>
+                <div class="card-body">
+                    {% if mailings %}
+                        {% for mailing in mailings %}
+                            <p><a href="{% url 'mailings:mailing_detail' mailing.0.pk %}" class="btn btn-sm btn-outline-primary"> {{ mailing.0 }}</a> - {{ mailing.1 }}</p>
+                        {% endfor %}
+                    {% else %}
+                        У вас пока нет ни одной рассылки
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

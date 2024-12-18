@@ -9,7 +9,7 @@ class MessageForm(ModelForm):
     """
     class Meta:
         model = Message
-        fields = "__all__"
+        exclude = ["owner"]
 
     def __init__(self, *args, **kwargs):
         """
@@ -34,7 +34,7 @@ class RecipientForm(ModelForm):
     """
     class Meta:
         model = Recipient
-        fields = "__all__"
+        exclude = ["owner"]
 
     def __init__(self, *args, **kwargs):
         """
@@ -71,7 +71,7 @@ class MailingForm(ModelForm):
     """
     class Meta:
         model = Mailing
-        fields = "__all__"
+        exclude = ["owner"]
 
     def __init__(self, *args, **kwargs):
         """
