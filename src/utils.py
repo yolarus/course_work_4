@@ -97,7 +97,6 @@ def send_mailing(mailing_pk: int, user) -> str:
         attempt.status = "successful"
         attempt.mail_server_response = "Рассылка успешно отправлена"
     except Exception as e:
-        mailing.status = "created"
         attempt.status = "unsuccessful"
         attempt.mail_server_response = e.args[1]
     mailing.save()
@@ -131,12 +130,13 @@ def get_personal_statistic(user):
     result = {"mailings": []}
     for mailing in mailings:
         attempts = AttemptMailing.objects.filter(mailing=mailing)
-        attempts_count = attempts.count()
+        user_attempts = attempts.filter(owner=user)
         successful_attempts_count = attempts.filter(status="successful").count()
         recipients = get_recipients_list(mailing)
-        result["mailings"].append((mailing, (f"было произведено {attempts_count} попыток отправки, "
+        result["mailings"].append((mailing, (f"было произведено {len(attempts)} попыток отправки, "
                                              f"{successful_attempts_count} из них успешны. "
-                                             f"В рассылке состояло {len(recipients)} получателей. "
+                                             f"Лично вами было предпринято {len(user_attempts)}/{len(attempts)} "
+                                             f"попыток. В рассылке состояло {len(recipients)} получателей. "
                                              f"Каждый из получателей на данных момент получил "
                                              f"{successful_attempts_count} сообщений.")))
     return result
