@@ -16,7 +16,9 @@
 13. Настроено кеширование списков объектов mailings, recipients, users - данные queryset'ы используются как в ListView, так и в других сервисных функциях для оптимизации работы приложения. 
 14. Выполнена проверка с помощью линтера flake8.
 15. Создана кастомная команда 'python manage.py start-scheduler' для автоматической отправки сообщений по расписанию 
-16. Создан файл README.md.
+16. Созданы кастомные команды 'python manage.py load_mailings' и 'python manage.py load_users_groups_and_permissions' для заполнения БД
+17. Настроены логирование всего проекта в файл log/main.log 
+18. Создан файл README.md.
 
 ## Установка проекта
 1. Клонирование проекта из [GitHub](https://github.com/yolarus/course_work_4) по HTTPS-токену или SSH-ключу.
@@ -30,7 +32,7 @@
 
 ## Запуск
 1. Запустить Redis, прописав в командной строке 'redis-server'. 
-2. Прописать в командной строке 'python manage.py load_users_and_groups'. 
+2. Прописать в командной строке 'python manage.py load_users_groups_and_permissions'. 
 3. Прописать в командной строке 'python manage.py load_mailings'. 
 4. Прописать в командной строке 'python manage.py runserver'. 
 5. Нажать на ссылку на локальный сервер.
