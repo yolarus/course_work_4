@@ -2,8 +2,11 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 
+from users.models import User
 from mailings.models import AttemptMailing, Mailing, Recipient
+from config.settings import CACHE_ENABLED
 
 
 def check_photo(photo):
@@ -21,6 +24,48 @@ def check_photo(photo):
         return False
 
 
+def get_all_mailings_from_cache():
+    """
+    Получение списка всех рассылок из кеша / БД
+    """
+    if not CACHE_ENABLED:
+        mailings = Mailing.objects.all()
+    else:
+        mailings = cache.get("mailings")
+        if not mailings:
+            mailings = Mailing.objects.all()
+            cache.set("mailings", mailings, 5 * 60)
+    return mailings.order_by("id")
+
+
+def get_all_recipients_from_cache():
+    """
+    Получение списка всех получателей рассылок из кеша / БД
+    """
+    if not CACHE_ENABLED:
+        recipients = Recipient.objects.all()
+    else:
+        recipients = cache.get("recipients")
+        if not recipients:
+            recipients = Recipient.objects.all()
+            cache.set("recipients", recipients, 5 * 60)
+    return recipients.order_by("last_name")
+
+
+def get_all_users_from_cache():
+    """
+    Получение списка всех пользователей сервиса рассылок из кеша / БД
+    """
+    if not CACHE_ENABLED:
+        users = User.objects.all()
+    else:
+        users = cache.get("users")
+        if not users:
+            users = Recipient.objects.all()
+            cache.set("users", users, 5 * 60)
+    return users.order_by("id")
+
+
 def get_recipients_list(mailing: Mailing | None = None):
     """
     Получение списка получателей указанной рассылки
@@ -30,7 +75,7 @@ def get_recipients_list(mailing: Mailing | None = None):
     if mailing:
         recipients = mailing.recipients
     else:
-        recipients = Recipient.objects.all()
+        recipients = get_all_recipients_from_cache()
     return recipients.order_by("last_name")
 
 
@@ -38,6 +83,7 @@ def send_mailing(mailing_pk: int, user) -> str:
     """
     Отправка рассылки по ключу
     :param mailing_pk: Primary key модели Mailing
+    :param user: Текущий пользователь
     :return: Ответ почтового сервера
     """
     mailing = get_object_or_404(Mailing, pk=mailing_pk)
@@ -64,10 +110,10 @@ def get_statistic_to_index():
     """
     Сбор статистики для отображения на главной странице
     """
-    mailings = Mailing.objects.all()
+    mailings = get_all_mailings_from_cache()
     mailings_count = mailings.count()
     started_mailings_count = mailings.filter(status="started").count()
-    recipients = Recipient.objects.all()
+    recipients = get_all_recipients_from_cache()
     recipients_count = recipients.count()
     result = {
         "mailings_count": mailings_count,

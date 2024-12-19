@@ -1,5 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import Group
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
@@ -7,7 +6,7 @@ from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from src.utils import (add_owner_to_instance, check_access_to_delete, check_access_to_view, get_personal_statistic,
-                       get_queryset_for_owner, get_recipients_list, get_statistic_to_index, send_mailing)
+                       get_queryset_for_owner, get_recipients_list, get_statistic_to_index, send_mailing, get_all_recipients_from_cache, get_all_mailings_from_cache)
 
 from .forms import MailingForm, MailingManagerForm, MessageForm, RecipientForm
 from .models import AttemptMailing, Mailing, Message, Recipient
@@ -200,8 +199,7 @@ class RecipientListView(LoginRequiredMixin, ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        queryset = get_queryset_for_owner(self.request.user, super().get_queryset())
-        return queryset.order_by("last_name")
+        return get_queryset_for_owner(self.request.user, get_all_recipients_from_cache())
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -296,8 +294,7 @@ class MailingListView(LoginRequiredMixin, ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        queryset = get_queryset_for_owner(self.request.user, super().get_queryset())
-        return queryset
+        return get_queryset_for_owner(self.request.user, get_all_mailings_from_cache())
 
 
 class MailingSendView(LoginRequiredMixin, View):
@@ -322,5 +319,4 @@ class AttemptMailingListView(LoginRequiredMixin, ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        queryset = get_queryset_for_owner(self.request.user, super().get_queryset())
-        return queryset
+        return get_queryset_for_owner(self.request.user, super().get_queryset())

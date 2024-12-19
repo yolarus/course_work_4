@@ -1,9 +1,10 @@
 import secrets
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import (LoginView, PasswordResetView, PasswordResetCompleteView,
                                        PasswordResetDoneView, PasswordResetConfirmView)
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
@@ -15,6 +16,7 @@ from config.settings import EMAIL_HOST_USER
 
 from .forms import LoginUserForm, UserBlockForm, UserProfileForm, UserRegisterForm, UserPasswordResetForm, UserSetPasswordForm
 from .models import User
+from src.utils import get_all_users_from_cache
 
 
 # Create your views here.
@@ -83,6 +85,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         raise PermissionDenied
 
 
+@method_decorator(cache_page(5 * 60), name="dispatch")
 class UserDetailView(LoginRequiredMixin, DetailView):
     """
     Класс-представление для страницы информации о пользователе
@@ -113,7 +116,7 @@ class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = "users.can_block_user"
 
     def get_queryset(self):
-        return super().get_queryset().order_by("id")
+        return get_all_users_from_cache()
 
 
 class UserPasswordResetView(PasswordResetView):
