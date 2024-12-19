@@ -1,22 +1,23 @@
 import secrets
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.views import (LoginView, PasswordResetView, PasswordResetCompleteView,
-                                       PasswordResetDoneView, PasswordResetConfirmView)
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
+from django.contrib.auth.views import (LoginView, PasswordResetCompleteView, PasswordResetConfirmView,
+                                       PasswordResetDoneView, PasswordResetView)
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 
 from config.settings import EMAIL_HOST_USER
-
-from .forms import LoginUserForm, UserBlockForm, UserProfileForm, UserRegisterForm, UserPasswordResetForm, UserSetPasswordForm
-from .models import User
 from src.utils import get_all_users_from_cache
+
+from .forms import (LoginUserForm, UserBlockForm, UserPasswordResetForm, UserProfileForm, UserRegisterForm,
+                    UserSetPasswordForm)
+from .models import User
 
 
 # Create your views here.

@@ -5,8 +5,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from src.utils import (add_owner_to_instance, check_access_to_delete, check_access_to_view, get_personal_statistic,
-                       get_queryset_for_owner, get_recipients_list, get_statistic_to_index, send_mailing, get_all_recipients_from_cache, get_all_mailings_from_cache)
+from src.utils import (add_owner_to_instance, check_access_to_delete, check_access_to_view,
+                       get_all_mailings_from_cache, get_all_recipients_from_cache, get_personal_statistic,
+                       get_queryset_for_owner, get_recipients_list, get_statistic_to_index, send_mailing)
 
 from .forms import MailingForm, MailingManagerForm, MessageForm, RecipientForm
 from .models import AttemptMailing, Mailing, Message, Recipient
@@ -31,7 +32,7 @@ class PersonalStatisticView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class MessageCreateView(LoginRequiredMixin,CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
     """
     Представление для страницы создания сообщения рассылки
     """

@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, UserCreationForm
 from django.forms import ModelForm
 
 from src.utils import check_photo
@@ -141,10 +141,9 @@ class UserPasswordResetForm(PasswordResetForm):
         super(UserPasswordResetForm, self).__init__(*args, **kwargs)
 
         self.fields["email"].widget.attrs.update({
-                "class": "form-control",
-                "placeholder": "Введите email"
-
-            })
+            "class": "form-control",
+            "placeholder": "Введите email"
+        })
 
 
 class UserSetPasswordForm(SetPasswordForm):
@@ -158,12 +157,10 @@ class UserSetPasswordForm(SetPasswordForm):
         super(UserSetPasswordForm, self).__init__(*args, **kwargs)
 
         self.fields["new_password1"].widget.attrs.update({
-                "class": "form-control",
-                "placeholder": "Введите новый пароль"
-
-            })
+            "class": "form-control",
+            "placeholder": "Введите новый пароль"
+        })
         self.fields["new_password2"].widget.attrs.update({
             "class": "form-control",
             "placeholder": "Повторите новый пароль"
-
         })

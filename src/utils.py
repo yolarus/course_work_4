@@ -1,12 +1,12 @@
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from django.core.cache import cache
 
-from users.models import User
-from mailings.models import AttemptMailing, Mailing, Recipient
 from config.settings import CACHE_ENABLED
+from mailings.models import AttemptMailing, Mailing, Recipient
+from users.models import User
 
 
 def check_photo(photo):
