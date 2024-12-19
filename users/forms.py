@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm, SetPasswordForm
 from django.forms import ModelForm
 
 from src.utils import check_photo
@@ -127,4 +127,43 @@ class UserBlockForm(ModelForm):
 
         self.fields["is_active"].widget.attrs.update({
             "class": "form-check-input",
+        })
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    """
+    Форма для отправки сообщения на почту для сброса пароля пользователя
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы
+        """
+        super(UserPasswordResetForm, self).__init__(*args, **kwargs)
+
+        self.fields["email"].widget.attrs.update({
+                "class": "form-control",
+                "placeholder": "Введите email"
+
+            })
+
+
+class UserSetPasswordForm(SetPasswordForm):
+    """
+    Форма для ввода нового пароля пользователя
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы
+        """
+        super(UserSetPasswordForm, self).__init__(*args, **kwargs)
+
+        self.fields["new_password1"].widget.attrs.update({
+                "class": "form-control",
+                "placeholder": "Введите новый пароль"
+
+            })
+        self.fields["new_password2"].widget.attrs.update({
+            "class": "form-control",
+            "placeholder": "Повторите новый пароль"
+
         })
