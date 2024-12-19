@@ -1,0 +1,56 @@
+{% extends 'mailings/base.html' %}
+{% load my_tags %}
+{% block optional_styles %}
+    <style>
+        #btn-mailings {
+        background-color: #0d6efd;
+        border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<aside>
+    {% include "mailings/tools/navbar.html" %}
+</aside>
+
+<main>
+    <div class="pt-5 row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <h1 class="pt-5 text-center">Данные о рассылке</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="card col-8 ps-0 pe-0 ms-4 me-5 my-3 container">
+            <div class="card-header text-center">
+                Рассылка №{{ mailing.id }}
+            </div>
+            <div class="card-body">
+                <p>Статус: {{ mailing.get_status_display }}</p>
+                <p>Дата и время первой отправки: {{ mailing.time_of_the_first_sending }}</p>
+                <p>Дата и время окончания отправки: {{ mailing.time_of_the_completion }}</p>
+                <p>Сообщение: <a href="{% url 'mailings:message_detail' mailing.message.pk %}" class="btn btn-sm btn-outline-primary">{{ mailing.message }}</a></p>
+                <p>
+                    Получатели:
+                    {% for recipient in recipients %}
+                    <a href="{% url 'mailings:recipient_detail' recipient.pk %}" class="btn btn-sm btn-outline-primary">{{ recipient }}</a>
+                    {% endfor %}
+                </p>
+                <div class="container text-center">
+                        <div class="btn-group w-50">
+                            <a href="{% url 'mailings:mailing_list' %}" class="btn btn-outline-primary my-2" role="button">К списку</a>
+                            <a href="{% url 'mailings:mailing_send' mailing.pk %}" class="btn btn-outline-success my-2" role="button">Отправить</a>
+                            <a href="{% url 'mailings:mailing_update' mailing.pk %}" class="btn btn-outline-secondary my-2" role="button">Редактировать</a>
+                            {% if user == mailing.owner or user.is_superuser %}
+                            <a href="{% url 'mailings:mailing_delete' mailing.pk %}" class="btn btn-outline-danger my-2" role="button">Удалить</a>
+                            {% endif %}
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

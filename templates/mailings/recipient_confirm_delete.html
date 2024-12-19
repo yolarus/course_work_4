@@ -1,0 +1,42 @@
+{% extends 'mailings/base.html' %}
+{% load my_tags %}
+{% block optional_styles %}
+    <style>
+        #btn-recipients {
+        background-color: #0d6efd;
+        border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<aside>
+    {% include "mailings/tools/navbar.html" %}
+</aside>
+
+<main>
+    <div class="pt-5 pb-5 row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <h1 class="pt-5 text-center">Подтверждение удаления</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <p class="text-center">Вы уверены, что хотите удалить получателя "{{ recipient.email }}"</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5"></div>
+        <div class="col-3 ms-5 me-5 text-center">
+                <form action="#" method="post" enctype='multipart/form-data'>
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Удалить</button>
+                    <a href="{% url 'mailings:recipient_detail' recipient.pk %}" class="btn btn-outline-primary">Отменить</a>
+                </form>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

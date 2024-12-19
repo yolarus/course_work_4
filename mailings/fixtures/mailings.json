@@ -1,0 +1,217 @@
+[
+{
+    "model": "mailings.recipient",
+    "pk": 1,
+    "fields": {
+        "email": "drakon507@yandex.ru",
+        "first_name": "Руслан",
+        "last_name": "Аляутдинов",
+        "middle_name": "Тахирович",
+        "comment": "Это первый получатель рассылки!",
+        "owner": null
+    }
+},
+{
+    "model": "mailings.recipient",
+    "pk": 3,
+    "fields": {
+        "email": "rusalyautdinov@yandex.ru",
+        "first_name": "Руслан",
+        "last_name": "Аляутдинов",
+        "middle_name": null,
+        "comment": "",
+        "owner": null
+    }
+},
+{
+    "model": "mailings.recipient",
+    "pk": 5,
+    "fields": {
+        "email": "drakon506@yandex.ru",
+        "first_name": "Иван",
+        "last_name": "Иванов",
+        "middle_name": "Иванович",
+        "comment": "",
+        "owner": 4
+    }
+},
+{
+    "model": "mailings.message",
+    "pk": 2,
+    "fields": {
+        "subject": "Тестовое создание нового сообщения рассылки",
+        "body": "Добрый день! \r\nЭто тестовое создание нового сообщения для рассылки. Напишем здесь побольше текста, чтобы также проверить работу шаблонного фильтра truncatechars. Больше 150 символов должно обрезаться в списке всех сообщений.",
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.message",
+    "pk": 4,
+    "fields": {
+        "subject": "Второй тест",
+        "body": "Это второе сообщение для рассылки",
+        "owner": 4
+    }
+},
+{
+    "model": "mailings.mailing",
+    "pk": 1,
+    "fields": {
+        "time_of_the_first_sending": "2024-12-14T15:00:00Z",
+        "time_of_the_completion": "2024-12-21T15:00:00Z",
+        "status": "started",
+        "message": 2,
+        "owner": 4,
+        "recipients": [
+            1,
+            3
+        ]
+    }
+},
+{
+    "model": "mailings.mailing",
+    "pk": 2,
+    "fields": {
+        "time_of_the_first_sending": "2024-12-17T19:00:00Z",
+        "time_of_the_completion": "2024-12-24T19:00:00Z",
+        "status": "started",
+        "message": 2,
+        "owner": null,
+        "recipients": [
+            1
+        ]
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 14,
+    "fields": {
+        "created_at": "2024-12-17T19:31:43.446Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 1,
+        "owner": 4
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 15,
+    "fields": {
+        "created_at": "2024-12-18T20:00:02.891Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 2,
+        "owner": 5
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 16,
+    "fields": {
+        "created_at": "2024-12-19T06:51:19.170Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 17,
+    "fields": {
+        "created_at": "2024-12-19T07:22:01.430Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 18,
+    "fields": {
+        "created_at": "2024-12-19T07:22:03.830Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 2,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 19,
+    "fields": {
+        "created_at": "2024-12-19T07:31:00.075Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 20,
+    "fields": {
+        "created_at": "2024-12-19T07:31:02.983Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 2,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 21,
+    "fields": {
+        "created_at": "2024-12-19T07:38:00.089Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 22,
+    "fields": {
+        "created_at": "2024-12-19T07:38:04.772Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 2,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 25,
+    "fields": {
+        "created_at": "2024-12-19T15:40:12.992Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 26,
+    "fields": {
+        "created_at": "2024-12-19T15:43:00.082Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "mailings.attemptmailing",
+    "pk": 27,
+    "fields": {
+        "created_at": "2024-12-19T15:43:01.178Z",
+        "status": "successful",
+        "mail_server_response": "Рассылка успешно отправлена",
+        "mailing": 2,
+        "owner": 1
+    }
+}
+]

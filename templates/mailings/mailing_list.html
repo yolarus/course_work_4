@@ -1,0 +1,74 @@
+{% extends 'mailings/base.html' %}
+
+{% block optional_styles %}
+    <style>
+        #btn-mailings {
+        background-color: #0d6efd;
+        border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<aside>
+    {% include "mailings/tools/navbar.html" %}
+</aside>
+
+<main>
+    <div class="pt-5 row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <h1 class="text-center">Рассылки</h1>
+            <p class="text-secondary pt-2 pb-3 text-center">
+                <a href="{% url 'mailings:mailing_create' %}" class="btn btn-outline-primary">Создать новую рассылку</a>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-9">
+            <div class="row">
+                {% for mailing in page_obj %}
+                <div class="card col-3 ps-0 pe-0 text-center ms-4 me-5 my-3 container">
+                    <div class="card-header">
+                        Рассылка №{{ mailing.pk}}
+                    </div>
+                    <div class="card-body row d-flex flex-column justify-content-between">
+                        <p>Статус: {{ mailing.get_status_display }}</p>
+                        <p class="py-0 my-0">Сообщение: <a href="{% url 'mailings:message_detail' mailing.message.pk %}" class="btn btn-sm btn-outline-primary">{{ mailing.message | truncatechars:15 }}</a></p>
+                        <div class="w-100 container py-0 my-0">
+                           <a href="{% url 'mailings:mailing_detail' mailing.pk %}" class="btn btn-outline-primary w-100 my-2" role="button">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="position-fixed position-absolute bottom-0 start-50">
+            <nav>
+              <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                  {% endif %}
+                  <li class="page-item page-link">
+                      Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                  </li>
+                  {% if page_obj.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{page_obj.next_page_number}}" aria-label="Следующая">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                  {% endif %}
+              </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+{% endblock %}

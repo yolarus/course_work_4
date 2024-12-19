@@ -1,0 +1,83 @@
+{% extends 'mailings/base.html' %}
+{% load my_tags %}
+
+{% block optional_styles %}
+    <style>
+        #user-dropup {
+        background-color: #0d6efd;
+        border-radius: 5px;
+        }
+        .preformatted-text {
+        white-space: pre-wrap;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<aside>
+    {% include "mailings/tools/navbar.html" %}
+</aside>
+
+<main>
+    <div class="pt-5 row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <h1 class="pt-5 text-center">Данные о пользователе</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="card col-8 ps-0 pe-0 ms-4 me-5 mt-3 container">
+            <div class="card-header text-center">
+                {% if user.avatar %}
+                    <img class="icon rounded-circle" src="{{ user.avatar | media_filter }}" width="40" height="40">
+                {% endif %}
+                {{ user.email }}
+            </div>
+            <div class="card-body">
+                {% if not user.avatar %}
+                <p class="py-0 my-0">Аватар не указан</p>
+                {% endif %}
+                {% if user.username %}
+                <p class="py-0 my-0">Ник: {{ user.username }}</p>
+                {% else %}
+                <p class="py-0 my-0">Ник не указан</p>
+                {% endif %}
+
+                {% if user.first_name %}
+                <p class="py-0 my-0">Имя: {{ user.first_name }}</p>
+                {% else %}
+                <p class="py-0 my-0">Имя не указано</p>
+                {% endif %}
+
+                {% if user.last_name %}
+                <p class="py-0 my-0">Фамилия: {{ user.last_name }}</p>
+                {% else %}
+                <p class="py-0 my-0">Фамилия не указана</p>
+                {% endif %}
+
+                {% if user.phone_number %}
+                <p class="py-0 my-0">Телефон: {{ user.phone_number }}</p>
+                {% else %}
+                <p class="py-0 my-0">Телефон не указан</p>
+                {% endif %}
+
+                {% if user.country %}
+                <p class="py-0 my-0">Страна: {{ user.county }}</p>
+                {% else %}
+                <p class="py-0 my-0">Страна не указана</p>
+                {% endif %}
+                <div class="container text-center">
+                        <div class="btn-group w-50">
+                            {% if perms.users.can_block_user %}
+                            <a href="{% url 'users:user_list' %}" class="btn btn-outline-primary my-2" role="button">К списку</a>
+                            {% endif %}
+                            <a href="{% url 'users:user_update' user.pk %}" class="btn btn-outline-secondary my-2" role="button">Редактировать</a>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

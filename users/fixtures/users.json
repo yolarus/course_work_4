@@ -1,0 +1,92 @@
+[
+{
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$h1nKxEN5ebRysqw8HW3F6G$59LPVp09bDIAlo4b0MCLr6OlIlVR1UALnjSbYDzqSGo=",
+        "last_login": "2024-12-19T16:50:59.205Z",
+        "is_superuser": true,
+        "first_name": "Руслан",
+        "last_name": "Аляутдинов",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2024-12-13T17:14:13.003Z",
+        "email": "admin@mail.ru",
+        "username": "admin",
+        "phone_number": null,
+        "avatar": "users/avatars/NyanCat.gif",
+        "country": null,
+        "token": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$GacHaRTOHLbvFRJM9lGllH$7nsbXolNBGRwpyP5ww99Y7pEq+IWt086/cH2GglDcQk=",
+        "last_login": "2024-12-19T17:19:59.140Z",
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2024-12-14T10:42:01.572Z",
+        "email": "rusalyautdinov@yandex.ru",
+        "username": null,
+        "phone_number": null,
+        "avatar": "",
+        "country": null,
+        "token": "06693408910cfb219a827a8db8818ffe",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$OX02Hqooa9fteL0SueJsiW$vAi5KxgLBsC+ea7DU2trMr6yQWafs7Tg5HhfD6aM5qE=",
+        "last_login": "2024-12-19T17:03:51.035Z",
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2024-12-18T19:15:01Z",
+        "email": "drakon507@yandex.ru",
+        "username": "drakon507",
+        "phone_number": null,
+        "avatar": "",
+        "country": null,
+        "token": "9975d6452edbae2b6856cf9bffc412f4",
+        "groups": [
+            1
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 10,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$QEhZoCamDAPDdnrILY3UWU$8Xd+8vFJEAR6O/5rWHe1pZtmma8boor5t37qobH0lLg=",
+        "last_login": "2024-12-19T16:53:40.875Z",
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2024-12-19T16:51:32.076Z",
+        "email": "drakon507@gmail.com",
+        "username": null,
+        "phone_number": null,
+        "avatar": "",
+        "country": null,
+        "token": "bf0c8498d1a8f14e3d4e6daa09ced45f",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

@@ -1,0 +1,49 @@
+{% extends 'mailings/base.html' %}
+{% load my_tags %}
+{% block optional_styles %}
+    <style>
+        #btn-messages {
+        background-color: #0d6efd;
+        border-radius: 5px;
+        }
+        .preformatted-text {
+            white-space: pre-wrap;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<aside>
+    {% include "mailings/tools/navbar.html" %}
+</aside>
+
+<main>
+    <div class="pt-5 row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <h1 class="pt-5 text-center">Данные о сообщении</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="card col-8 ps-0 pe-0 ms-4 me-5 mt-3 container">
+            <div class="card-header text-center">
+                Тема: {{ message.subject }}
+            </div>
+            <div class="card-body">
+                <p class="preformatted-text">Сообщение:<br>{{ message.body }}</p>
+                <div class="container text-center">
+                        <div class="btn-group w-50">
+                            <a href="{% url 'mailings:message_list' %}" class="btn btn-outline-primary my-2" role="button">К списку</a>
+                            {% if user == message.owner or user.is_superuser %}
+                            <a href="{% url 'mailings:message_update' message.pk %}" class="btn btn-outline-secondary my-2" role="button">Редактировать</a>
+                            <a href="{% url 'mailings:message_delete' message.pk %}" class="btn btn-outline-danger my-2" role="button">Удалить</a>
+                            {% endif %}
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

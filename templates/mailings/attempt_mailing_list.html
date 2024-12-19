@@ -1,0 +1,70 @@
+{% extends 'mailings/base.html' %}
+
+{% block optional_styles %}
+    <style>
+        #btn-attempts {
+        background-color: #0d6efd;
+        border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<aside>
+    {% include "mailings/tools/navbar.html" %}
+</aside>
+
+<main>
+    <div class="pt-5 row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <h1 class="text-center">Попытки рассылок</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-9">
+            <div class="row">
+                {% for attempt in page_obj %}
+                <div class="card col-3 ps-0 pe-0 text-center ms-4 me-5 my-3 container">
+                    <div class="card-header">
+                        Попытка №{{ attempt.pk}}
+                    </div>
+                    <div class="card-body row d-flex flex-column justify-content-between">
+                        <p class="py-0 my-0">Статус: {{ attempt.get_status_display }}</p>
+                        <p class="py-0 my-0">Время отправки: {{ attempt.created_at }}</p>
+                        <p class="py-0 my-0">Ответ почтового сервера: {{ attempt.mail_server_response }}</p>
+                        <p class="py-0 my-0">Рассылка: <a href="{% url 'mailings:mailing_detail' attempt.mailing.pk %}" class="btn btn-sm btn-outline-primary">{{ attempt.mailing | truncatechars:20 }}</a></p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="position-fixed position-absolute bottom-0 start-50">
+            <nav>
+              <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                  {% endif %}
+                  <li class="page-item page-link">
+                      Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                  </li>
+                  {% if page_obj.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{page_obj.next_page_number}}" aria-label="Следующая">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                  {% endif %}
+              </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+{% endblock %}

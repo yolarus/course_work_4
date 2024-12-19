@@ -1,0 +1,72 @@
+{% load my_tags %}
+<!-- Меню страницы -->
+<div class="position-fixed col-2 vh-100 container overflow-hidden bg-dark text-white d-flex flex-column justify-content-between" data-bs-theme="dark">
+    <nav class="navbar-expand-lg w-100">
+        <div class="border-bottom py-3">
+             <div class="btn-group">
+                <a class="nav-link" href="" role="button">
+                    <img class="icon" src="/static/navbar/bootstrap-logo.svg" width="30" height="24">
+                    Меню
+                </a>
+             </div>
+        </div>
+        <div class="mt-2 py-2" id="btn-index">
+            <a class="nav-link" href="{% url 'mailings:index' %}">
+                <img class="icon" src="/static/navbar/house-door.svg" width="30" height="24">
+                Главная
+            </a>
+        </div>
+        <div class="mt-2 py-2" id="btn-messages">
+            <a class="nav-link" href="{% url 'mailings:message_list' %}">
+                <img class="icon" src="/static/navbar/blockquote-left.svg" width="30" height="24">
+                Сообщения
+            </a>
+        </div>
+        <div class="mt-2 py-2" id="btn-recipients">
+            <a class="nav-link" href="{% url 'mailings:recipient_list' %}">
+                <img class="icon" src="/static/navbar/people-fill.svg" width="30" height="24">
+                Получатели
+            </a>
+        </div>
+        <div class="mt-2 py-2" id="btn-mailings">
+            <a class="nav-link" href="{% url 'mailings:mailing_list' %}">
+                <img class="icon" src="/static/navbar/envelope.svg" width="30" height="24">
+                Рассылки
+            </a>
+        </div>
+        <div class="mt-2 py-2" id="btn-attempts">
+            <a class="nav-link" href="{% url 'mailings:attempt_mailing_list' %}">
+                <img class="icon" src="/static/navbar/send.svg" width="30" height="24">
+                Попытки
+            </a>
+        </div>
+    </nav>
+    <div class="border-top py-1 w-100">
+        {% if user.is_authenticated %}
+        <div class="btn-group dropup py-1 px-2 w-100" id="user-dropup">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if user.avatar %}
+                <img class="icon rounded-circle" src="{{ user.avatar | media_filter }}" width="40" height="40">
+                {% endif %}
+                {{ user.email | truncatechars:15 }}
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-start" href="{% url 'users:user_detail' user.pk %}">Профиль</a></li>
+                <li class="text-start">
+                    <form method="post" action="{% url 'users:logout' %}" class="dropdown-item">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link">Выход</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="text-center py-2 px-2">
+            <div class="btn-group" role="group">
+            <a href="{% url 'users:register' %}" class="btn btn-dark" role="button" id="btn-register">Регистрация</a>
+            <a href="{% url 'users:login' %}" class="btn btn-dark" role="button" id="btn-login">Вход</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
